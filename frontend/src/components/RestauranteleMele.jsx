@@ -77,10 +77,10 @@ const Restaurants = (props) => {
                                 <div>
                                     <img className='card-img' src={`http://localhost:5000/image/${restaurant.imagini[0]}`} />
                                 </div>
-                                <div className='p-3'>
-                                    <div><strong>Judet:</strong> {restaurant.judet}</div>
-                                    <div><strong>Oras:</strong> {restaurant.oras}</div>
-                                    <div><strong>Adresa:</strong> {restaurant.adresa}</div>
+                                <div>
+                                    <div>{restaurant.judet}</div>
+                                    <div>{restaurant.oras}</div>
+                                    <div>{restaurant.adresa}</div>
                                 </div>
                             </div>
                         </div>

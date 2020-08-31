@@ -1,7 +1,7 @@
-const { UserModel, UserType, RestaurantType, RestaurantModel, RestaurantRequestModel, RestaurantRequestType } = require('./Models.js')
+const { UserModel, UserType, RestaurantType, RestaurantModel, RestaurantRequestModel, RestaurantRequestType, TableType, TableInputType, ReviewType, ReviewModel } = require('./Models.js')
 
 const {
-    GraphQLID,
+    GraphQLInt,
     GraphQLObjectType,
     GraphQLList,
     GraphQLSchema,
@@ -33,11 +33,36 @@ const MainSchema = new GraphQLSchema({
             restaurants: {
                 type: GraphQLList(RestaurantType),
                 args: {
-                    search_text: { type: GraphQLString }
+                    search_text: { type: GraphQLString },
+                    judet: { type: GraphQLString },
                 },
                 resolve: (root, args, context, info) => {
-                    const search_text = "\"" + (args.search_text || '') + "\""
-                    return RestaurantModel.find({ $text: { $search: search_text } }).exec();
+                    const search_text = args.search_text || ''
+                    const search_texts = search_text.split(' ')
+                    const searchRegexps = search_texts.reduce((acc, text) => {
+                        acc.push({ judet: { $regex: new RegExp(`.*${text}.*`, 'i') } })
+                        acc.push({ nume: { $regex: new RegExp(`.*${text}.*`, 'i') } })
+                        acc.push({ oras: { $regex: new RegExp(`.*${text}.*`, 'i') } })
+                        acc.push({ adresa: { $regex: new RegExp(`.*${text}.*`, 'i') } })
+                        return acc
+                    }, [])
+                    const searchFields = {}
+                    if (args.judet) searchFields.judet = args.judet
+                    return RestaurantModel.find({
+                        $or: searchRegexps,
+                        ...searchFields,
+                    }).exec();
+                }
+            },
+            reviews: {
+                type: GraphQLList(RestaurantType),
+                args: {
+                    restaurant_id: { type: GraphQLInt },
+                },
+                resolve: (root, args, context, info) => {
+                    const searchFields = {}
+                    if (args.restaurant_id !== undefined) searchFields.restaurant_id = args.restaurant_id
+                    return RestaurantModel.find(searchFields).exec()
                 }
             },
             restaurantsRequests: {
@@ -49,7 +74,7 @@ const MainSchema = new GraphQLSchema({
             userByID: {
                 type: UserType,
                 args: {
-                    id: { type: GraphQLNonNull(GraphQLID) }
+                    id: { type: GraphQLNonNull(GraphQLInt) }
                 },
                 resolve: (root, args, context, info) => {
                     return UserModel.findById(args.id).exec()
@@ -89,7 +114,7 @@ const MainSchema = new GraphQLSchema({
             adauga_user: {
                 type: UserType,
                 args: {
-                    id: { type: GraphQLID },
+                    id: { type: GraphQLInt },
                     nume: { type: GraphQLString },
                     prenume: { type: GraphQLString },
                     judet: { type: GraphQLString },
@@ -113,22 +138,71 @@ const MainSchema = new GraphQLSchema({
             adauga_restaurant: {
                 type: RestaurantType,
                 args: {
-                    id: { type: GraphQLID },
+                    id: { type: GraphQLInt },
                     nume: { type: GraphQLString },
                     judet: { type: GraphQLString },
                     oras: { type: GraphQLString },
                     adresa: { type: GraphQLString },
+                    mese: { type: GraphQLList(TableInputType) },
                 },
                 resolve: async (root, args, context, info) => {
                     let lastRestaurantID = -1
                     try {
-                        lastRestaurantID = await RestaurantRequestModel.findOne().sort({ _id: 1 }).limit(1).lean().id || -1
+                        const restaurant = await RestaurantRequestModel.findOne().sort({ _id: -1 }).limit(1).lean()
+                        lastRestaurantID = restaurant.id !== undefined ? restaurant.id : -1
                     } catch (e) { }
 
                     const restaurant = new RestaurantRequestModel({ ...args, id: lastRestaurantID + 1 });
                     return restaurant.save();
                 }
-            }
+            },
+            adauga_review: {
+                type: ReviewType,
+                args: {
+                    restaurant_id: { type: GraphQLInt },
+                    user_id: { type: GraphQLInt },
+                    message: { type: GraphQLString },
+                    stars: { type: GraphQLInt },
+                },
+                resolve: async (root, args, context, info) => {
+                    const review = new ReviewModel({
+                        ...args
+                    })
+                    return review.save()
+                }
+            },
+            confirm_restaurant: {
+                type: RestaurantType,
+                args: {
+                    id: { type: GraphQLInt },
+                    nume: { type: GraphQLString },
+                    judet: { type: GraphQLString },
+                    oras: { type: GraphQLString },
+                    adresa: { type: GraphQLString },
+                    mese: { type: GraphQLList(TableInputType) },
+                },
+                resolve: async (root, args, context, info) => {
+                    const result = await RestaurantRequestModel.findOneAndDelete({ id: args.id })
+                    let lastRestaurantID = -1
+                    try {
+                        const restaurant = await RestaurantModel.findOne().sort({ _id: 1 }).limit(1).lean()
+                        lastRestaurantID = restaurant.id !== undefined ? restaurant.id : -1
+                    } catch (e) { }
+
+                    const restaurant = new RestaurantModel({ ...args, id: lastRestaurantID + 1 })
+                    return restaurant.save()
+                }
+            },
+            respinge_restaurant: {
+                type: RestaurantType,
+                args: {
+                    id: { type: GraphQLInt },
+                },
+                resolve: async (root, args, context, info) => {
+                    await RestaurantRequestModel.findOneAndDelete({ id: args.id })
+                    return 'succes'
+                }
+            },
         }
     }),
 })

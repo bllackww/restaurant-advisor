@@ -6,3 +6,41 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.cursor-pointer {
+  cursor: pointer;
+}
+.table {
+  height: 80px;
+  width: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: lightgray;
+  border-radius: 5px;
+}
+.table.selected {
+  background-color: #90d490;
+}
+
+.table.free {
+  background-color: lightgray;
+  
+}
+
+.nr-locuri-input {
+  width: 50px;
+  height: 30px;
+  border-color: lightskyblue;
+}
+
+.card-img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.reviews {
+  border: 1px solid orange;
+  border-radius: 5px;
+  padding: 1rem;
+}

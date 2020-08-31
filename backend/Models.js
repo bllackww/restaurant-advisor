@@ -1,16 +1,17 @@
 const mongoose = require('mongoose')
 
 const {
-    GraphQLID,
+    GraphQLInt,
     GraphQLString,
     GraphQLObjectType,
     GraphQLList,
-    GraphQLInt,
+    GraphQLInputObjectType,
 } = require('graphql')
 const GraphQLDate = require('graphql-date')
+const { GraphQLBoolean } = require('graphql')
 
 const UserModel = mongoose.model('user', {
-    id: String,
+    id: Number,
     nume: String,
     prenume: String,
     judet: String,
@@ -23,31 +24,34 @@ const UserModel = mongoose.model('user', {
 }, 'user')
 
 const RestaurantModel = mongoose.model('restaurant', {
-    id: String,
+    id: Number,
     nume: String,
     judet: String,
     oras: String,
     adresa: String,
+    mese: [{ id: Number, selected: Boolean, numar_locuri: Number }],
+    imagini: [String]
 }, 'restaurant')
 
 const RestaurantRequestModel = mongoose.model('restaurant_request', {
-    id: String,
+    id: Number,
     nume: String,
     judet: String,
     oras: String,
     adresa: String,
+    mese: [{ id: Number, selected: Boolean, numar_locuri: Number }],
 }, 'restaurant_request')
 
 const ReviewModel = mongoose.model('review', {
-    user_id: String,
-    restaurant_id: String,
+    user_id: Number,
+    restaurant_id: Number,
     message: String,
     stars: Number,
 }, 'review')
 
 const BookingModel = mongoose.model('booking', {
-    user_id: String,
-    restaurant_id: String,
+    user_id: Number,
+    restaurant_id: Number,
     data_si_ora: Date,
     durata_ore: Number,
 }, 'booking')
@@ -55,8 +59,8 @@ const BookingModel = mongoose.model('booking', {
 const ReviewType = new GraphQLObjectType({
     name: 'Review',
     fields: {
-        restaurant_id: { type: GraphQLID },
-        user_id: { type: GraphQLID },
+        restaurant_id: { type: GraphQLInt },
+        user_id: { type: GraphQLInt },
         message: { type: GraphQLString },
         stars: { type: GraphQLInt },
     }
@@ -65,8 +69,8 @@ const ReviewType = new GraphQLObjectType({
 const BookingType = new GraphQLObjectType({
     name: 'Booking',
     fields: {
-        restaurant_id: { type: GraphQLID },
-        user_id: { type: GraphQLID },
+        restaurant_id: { type: GraphQLInt },
+        user_id: { type: GraphQLInt },
         data_si_ora: { type: GraphQLDate },
         durata_ore: { type: GraphQLInt },
     }
@@ -76,7 +80,7 @@ const BookingType = new GraphQLObjectType({
 const UserType = new GraphQLObjectType({
     name: 'user',
     fields: {
-        id: { type: GraphQLID },
+        id: { type: GraphQLInt },
         nume: { type: GraphQLString },
         prenume: { type: GraphQLString },
         judet: { type: GraphQLString },
@@ -101,14 +105,34 @@ const UserType = new GraphQLObjectType({
     }
 })
 
+const TableType = new GraphQLObjectType({
+    name: 'table',
+    fields: {
+        id: { type: GraphQLInt },
+        selected: { type: GraphQLBoolean },
+        numar_locuri: { type: GraphQLInt },
+    }
+})
+
+const TableInputType = new GraphQLInputObjectType({
+    name: 'table_input',
+    fields: {
+        id: { type: GraphQLInt },
+        selected: { type: GraphQLBoolean },
+        numar_locuri: { type: GraphQLInt },
+    }
+})
+
 const RestaurantType = new GraphQLObjectType({
     name: 'restaurant',
     fields: {
-        id: { type: GraphQLID },
+        id: { type: GraphQLInt },
         nume: { type: GraphQLString },
         judet: { type: GraphQLString },
         oras: { type: GraphQLString },
         adresa: { type: GraphQLString },
+        mese: { type: GraphQLList(TableType) },
+        imagini: { type: GraphQLList(GraphQLString) },
         reviews: {
             type: GraphQLList(ReviewType),
             resolve(parent, args) {
@@ -127,11 +151,12 @@ const RestaurantType = new GraphQLObjectType({
 const RestaurantRequestType = new GraphQLObjectType({
     name: 'restaurant_request',
     fields: {
-        id: { type: GraphQLID },
+        id: { type: GraphQLInt },
         nume: { type: GraphQLString },
         judet: { type: GraphQLString },
         oras: { type: GraphQLString },
         adresa: { type: GraphQLString },
+        mese: { type: GraphQLList(TableType) },
     }
 })
 
@@ -147,4 +172,6 @@ module.exports = {
     BookingType,
     RestaurantRequestModel,
     RestaurantRequestType,
+    TableType,
+    TableInputType,
 }

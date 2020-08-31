@@ -8,6 +8,7 @@ import { Formik } from 'formik'
 import * as yup from 'yup'
 import { ADAUGA_RESTAURANT } from '../queries/queries'
 import { judete } from '../utils/utils'
+import RestaurantPlan from './RestaurantPlan'
 
 const schema = yup.object({
     nume: yup.string().required(),
@@ -20,10 +21,11 @@ const AddNewPlace = () => {
     const [addPlaceModal, setAddPlaceModal] = useState(false)
     const [validationMessage, setValidationMessage] = useState({ success: undefined, message: undefined })
     const [addRestaurant, { data }] = useMutation(ADAUGA_RESTAURANT);
+    const [tables, setTables] = useState(Array.from(Array(96).keys()).map((el, index) => ({ id: index, selected: false, numar_locuri: 0 })))
 
     return (
         <>
-            <div className='d-flex my-auto py-2 px-5 bg-gray text-white'
+            <div className='d-flex my-auto py-2 px-5 mr-2 bg-gray text-white'
                 style={{ border: '2px solid green', borderRadius: '5px', cursor: 'pointer' }}
                 onClick={() => setAddPlaceModal(true)}
             >
@@ -31,7 +33,7 @@ const AddNewPlace = () => {
                 <h5 className='my-0 ml-2'>Adauga restaurant</h5>
             </div>
             {addPlaceModal &&
-                <Modal show={true} size='lg' onHide={() => setAddPlaceModal(false)}>
+                <Modal show={true} size='xl' onHide={() => setAddPlaceModal(false)}>
                     <Modal.Header closeButton>
                         <Modal.Title>Adauga Restaurant</Modal.Title>
                     </Modal.Header>
@@ -44,7 +46,8 @@ const AddNewPlace = () => {
                                     setSubmitting(true)
                                     const { data } = await addRestaurant({
                                         variables: {
-                                            ...values
+                                            ...values,
+                                            mese: tables,
                                         }
                                     })
                                     Object.keys(values).forEach(key => (values[key] = ""))
@@ -124,17 +127,18 @@ const AddNewPlace = () => {
                                                 </Form.Control>
                                             </Form.Group>
                                         </Form.Row>
+                                        <RestaurantPlan tables={tables} setTables={setTables}/>
                                         {validationMessage.message && <div className={`text-${validationMessage.success ? 'success' : 'danger'} mb-3`}>
                                             {validationMessage.message}
                                         </div>}
-                                        <div className='d-flex justify-content-end'><Button variant="success" type="submit">
-                                            Trimite Cererea
-                            </Button>
+                                        <div className='d-flex justify-content-end mt-2'>
+                                            <Button variant="success" type="submit">
+                                                Trimite Cererea
+                                            </Button>
                                         </div>
                                     </Form>
                                 )}
                         </Formik>
-
                     </Modal.Body>
                 </Modal>
             }

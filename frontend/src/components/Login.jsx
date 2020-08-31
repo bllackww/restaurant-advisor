@@ -27,12 +27,13 @@ const Login = (props) => {
                 validationSchema={schema}
                 onSubmit={async (values, { setSubmitting, setErrors, setStatus, resetForm }) => {
                     try {
-                        const { data: { login: email } } = await props.client.query({
+                        const { data: { login: { email, id } } } = await props.client.query({
                             query: LOGIN,
                             variables: {
                                 ...values
                             }
                         })
+                        localStorage.setItem('user_id', id)
                         history.push('')
                     } catch (e) {
                         console.log(e)
