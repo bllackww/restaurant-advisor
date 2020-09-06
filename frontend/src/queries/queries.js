@@ -118,16 +118,41 @@ query Query($search_text: String, $judet: String) {
 	}
 `
 
+export const GET_RESTAURANT = gql`
+query Query($restaurant_id: Int!) {
+  restaurant (
+    restaurant_id: $restaurant_id
+  ){
+    id
+    nume
+    oras
+    judet
+    adresa
+    mese {
+      id
+      selected
+    }
+    imagini
+    reviews {
+      restaurant_id
+      user_id
+      message
+      stars
+    }
+  }
+}
+`
+
 export const GET_REVIEWS = gql`
 query Query($restaurant_id: Int) {
 		reviews (
       restaurant_id: $restaurant_id
     ){
       reviews {
-        restaurant_id,
-        user_id,
-        message,
-        stars,
+        restaurant_id
+        user_id
+        message
+        stars
       }
 		}
 	}

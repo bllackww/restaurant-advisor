@@ -8,9 +8,10 @@ import { useMutation } from 'react-apollo'
 import { ADAUGA_REVIEW } from '../queries/queries'
 
 const Reviews = (props) => {
-    const { loading, error, reviews, refetch } = useQuery(GET_REVIEWS, {
+    const reviews = useQuery(GET_REVIEWS, {
         variables: { restaurant_id: parseInt(props.id, 10) }
     })
+
     const [addReview, { data }] = useMutation(ADAUGA_REVIEW);
     const [addModal, setAddModal] = useState(false)
     const [stars, setStars] = useState(5)
@@ -26,31 +27,32 @@ const Reviews = (props) => {
             }
         })
         setAddModal(false)
-        refetch({
+        reviews.refetch({
             variables: { restaurant_id: props.id }
         })
     }
 
     return (
         <>
-            <div className='reviews'>
+            <div className='reviews mt-2'>
                 <div className='d-flex justify-content-between'>
-                    <h5>
+                    <h5 className='mb-0'>
                         Reviews
-            </h5>
+                    </h5>
                     <div className='d-flex cursor-pointer' onClick={() => setAddModal(true)}>
                         <span className='my-auto'>Adauga review</span>
                         <i className='fa fa-plus fa-lg my-auto ml-2 text-warning'></i>
                     </div>
                 </div>
-                {reviews?.data.map(r => (
-                    <div>
+                {reviews?.data?.reviews[0].reviews.map(r => (
+                    <div style={{border: '1px solid gray', borderRadius: '5px'}} className='my-5 p-3'>
                         <ReactStars
                             count={r.stars}
                             size={24}
                             color2={'#ffd700'}
-                            value={r.stars} />
-                        <span>{r.stars}</span>
+                            value={r.stars}
+                            edit={false}/>
+                        <span>{r.message}</span>
                     </div>
                 ))}
             </div>

@@ -59,10 +59,23 @@ const MainSchema = new GraphQLSchema({
                 args: {
                     restaurant_id: { type: GraphQLInt },
                 },
-                resolve: (root, args, context, info) => {
+                resolve: async (root, args, context, info) => {
                     const searchFields = {}
-                    if (args.restaurant_id !== undefined) searchFields.restaurant_id = args.restaurant_id
-                    return RestaurantModel.find(searchFields).exec()
+                    if (args.restaurant_id !== undefined) searchFields.id = args.restaurant_id
+                    const result = await RestaurantModel.find(searchFields).lean().exec()
+                    return result
+                }
+            },
+            restaurant: {
+                type: GraphQLList(RestaurantType),
+                args: {
+                    restaurant_id: { type: GraphQLInt },
+                },
+                resolve: async (root, args, context, info) => {
+                    const searchFields = {}
+                    if (args.restaurant_id !== undefined) searchFields.id = args.restaurant_id
+                    const result = await RestaurantModel.find(searchFields).lean().exec()
+                    return result
                 }
             },
             restaurantsRequests: {
