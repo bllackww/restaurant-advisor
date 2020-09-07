@@ -70,9 +70,11 @@ export const CONFIRM_RESTAURANT = gql`
       judet
       oras
       adresa
+      specific
       mese {
         id
         selected
+        numar_locuri
       }
     }
   }
@@ -109,6 +111,7 @@ query Query($search_text: String, $judet: String) {
       oras
       judet
       adresa
+      specific
       mese {
         id
         selected
@@ -128,9 +131,11 @@ query Query($restaurant_id: Int!) {
     oras
     judet
     adresa
+    specific
     mese {
       id
       selected
+      numar_locuri
     }
     imagini
     reviews {
@@ -166,6 +171,7 @@ export const GET_RESTAURANTS_REQUESTS = gql`
       oras
       judet
       adresa
+      specific
       mese {
         id
         selected

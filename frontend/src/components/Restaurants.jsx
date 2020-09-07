@@ -17,6 +17,7 @@ const Restaurants = (props) => {
     const { loading, error, data, refetch } = useQuery(GET_RESTAURANTS, {
         variables: { search_text: searchText, judet }
     })
+    console.log(data)
     const [uploading, setUploading] = useState(false)
 
     useEffect(() => {
@@ -57,35 +58,37 @@ const Restaurants = (props) => {
                         )
                     })}
                 </DropdownButton>
-                {data?.restaurants?.map(restaurant => (
-                    <div className='card mt-3'>
-                        <div className='d-flex justify-content-between card-header'>
-                            <div className='my-auto'>{restaurant.nume}</div>
-                            <div className='d-flex'>
-                                {props.owner && <div>
-                                    <input id='files' name='files' type='file' className='mb-2' style={{ display: 'none' }} onChange={(e) => incarcareImagini(e, restaurant.id)} multiple />
-                                    <label htmlFor="files" className="btn btn-outline-info">Incarcati imagini</label>
-                                    {uploading && <Spinner animation="border" variant="info" />}
-                                </div>}
-                                <div className='ml-2'>
-                                    <button onClick={() => history.push(`/restaurant/${restaurant.id}`)} className='btn btn-outline-info'>Detalii</button>
+                {data?.restaurants?.map(restaurant => {
+                    return (
+                        <div className='card mt-3'>
+                            <div className='d-flex justify-content-between card-header'>
+                                <div className='my-auto'>{restaurant.nume}</div>
+                                <div className='d-flex'>
+                                    {props.owner && <div>
+                                        <input id='files' name='files' type='file' className='mb-2' style={{ display: 'none' }} onChange={(e) => incarcareImagini(e, restaurant.id)} multiple />
+                                        <label htmlFor="files" className="btn btn-outline-info">Incarcati imagini</label>
+                                        {uploading && <Spinner animation="border" variant="info" />}
+                                    </div>}
+                                    <div className='ml-2'>
+                                        <button onClick={() => history.push(`/restaurant/${restaurant.id}`)} className='btn btn-outline-info'>Detalii</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='card-body'>
+                                <div className='d-flex'>
+                                    <div>
+                                        <img className='card-img' src={`http://localhost:5000/image/${restaurant.imagini[0]}`} />
+                                    </div>
+                                    <div className='p-3'>
+                                        <div><strong>Judet:</strong> {restaurant.judet}</div>
+                                        <div><strong>Oras:</strong> {restaurant.oras}</div>
+                                        <div><strong>Adresa:</strong> {restaurant.adresa}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div className='card-body'>
-                            <div className='d-flex'>
-                                <div>
-                                    <img className='card-img' src={`http://localhost:5000/image/${restaurant.imagini[0]}`} />
-                                </div>
-                                <div className='p-3'>
-                                    <div><strong>Judet:</strong> {restaurant.judet}</div>
-                                    <div><strong>Oras:</strong> {restaurant.oras}</div>
-                                    <div><strong>Adresa:</strong> {restaurant.adresa}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                    )
+                })}
             </Container>
         </div>
     )

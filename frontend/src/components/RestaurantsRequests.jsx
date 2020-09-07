@@ -20,7 +20,7 @@ const RestaurantsRequests = () => {
     const acceptaCerere = async () => {
         await confirmRestaurant({
             variables: {
-                ...selectedRowData
+                ...selectedRowData, mese: (selectedRowData.mese || []).map(m => ({ id: m.id, selected: m.selected, numar_locuri: m.numar_locuri }))
             }
         })
         refetch()
@@ -121,7 +121,7 @@ const RestaurantsRequests = () => {
             >
                 <Modal.Body>
                     <h5 className='text-center mt-3'>Plan Restaurant</h5>
-                    <RestaurantPlan tables={selectedRowData?.mese || []}/>
+                    <RestaurantPlan tables={selectedRowData?.mese || []} />
                 </Modal.Body>
 
                 <Modal.Footer>

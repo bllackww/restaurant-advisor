@@ -198,7 +198,7 @@ const MainSchema = new GraphQLSchema({
                     const result = await RestaurantRequestModel.findOneAndDelete({ id: args.id })
                     let lastRestaurantID = -1
                     try {
-                        const restaurant = await RestaurantModel.findOne().sort({ _id: 1 }).limit(1).lean()
+                        const restaurant = await RestaurantModel.findOne().sort({ _id: -1 }).limit(1).lean()
                         lastRestaurantID = restaurant.id !== undefined ? restaurant.id : -1
                     } catch (e) { }
 

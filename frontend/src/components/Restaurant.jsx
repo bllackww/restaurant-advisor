@@ -26,7 +26,7 @@ const Restaurant = (props) => {
             <Container>
                 <Reviews id={props.match.params.id} />
             </Container>
-            {bookingModal && <BookingModal data={data}/>}
+            {bookingModal && <BookingModal data={data.restaurant[0]} onClose={() => { setBookingModal(false) }}/>}
         </div>
     )
 }

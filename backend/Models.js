@@ -29,6 +29,7 @@ const RestaurantModel = mongoose.model('restaurant', {
     judet: String,
     oras: String,
     adresa: String,
+    specific: String,
     mese: [{ id: Number, selected: Boolean, numar_locuri: Number }],
     imagini: [String]
 }, 'restaurant')
@@ -39,6 +40,7 @@ const RestaurantRequestModel = mongoose.model('restaurant_request', {
     judet: String,
     oras: String,
     adresa: String,
+    specific: String,
     mese: [{ id: Number, selected: Boolean, numar_locuri: Number }],
 }, 'restaurant_request')
 
@@ -54,6 +56,7 @@ const BookingModel = mongoose.model('booking', {
     restaurant_id: Number,
     data_si_ora: Date,
     durata_ore: Number,
+    numar_masa: String,
 }, 'booking')
 
 const ReviewType = new GraphQLObjectType({
@@ -131,6 +134,7 @@ const RestaurantType = new GraphQLObjectType({
         judet: { type: GraphQLString },
         oras: { type: GraphQLString },
         adresa: { type: GraphQLString },
+        specific: { type: GraphQLString },
         mese: { type: GraphQLList(TableType) },
         imagini: { type: GraphQLList(GraphQLString) },
         reviews: {
@@ -156,6 +160,7 @@ const RestaurantRequestType = new GraphQLObjectType({
         judet: { type: GraphQLString },
         oras: { type: GraphQLString },
         adresa: { type: GraphQLString },
+        specific: { type: GraphQLString },
         mese: { type: GraphQLList(TableType) },
     }
 })
