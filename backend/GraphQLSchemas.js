@@ -1,4 +1,4 @@
-const { UserModel, UserType, RestaurantType, RestaurantModel, RestaurantRequestModel, RestaurantRequestType, TableType, TableInputType, ReviewType, ReviewModel } = require('./Models.js')
+const { UserModel, UserType, RestaurantType, RestaurantModel, RestaurantRequestModel, RestaurantRequestType, TableType, TableInputType, ReviewType, ReviewModel, BookingType, BookingModel } = require('./Models.js')
 
 const {
     GraphQLInt,
@@ -20,6 +20,15 @@ const validPassword = (password, storedPassword) => {
     return bcrypt.compareSync(password, storedPassword);
 }
 
+const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+
+    return array
+}
+
 const MainSchema = new GraphQLSchema({
     query: new GraphQLObjectType({
         name: "Query",
@@ -35,6 +44,7 @@ const MainSchema = new GraphQLSchema({
                 args: {
                     search_text: { type: GraphQLString },
                     judet: { type: GraphQLString },
+                    user_id: { type: GraphQLInt },
                 },
                 resolve: (root, args, context, info) => {
                     const search_text = args.search_text || ''
@@ -48,10 +58,37 @@ const MainSchema = new GraphQLSchema({
                     }, [])
                     const searchFields = {}
                     if (args.judet) searchFields.judet = args.judet
+                    if (args.user_id) searchFields.user_id = args.user_id
                     return RestaurantModel.find({
                         $or: searchRegexps,
                         ...searchFields,
                     }).exec();
+                }
+            },
+            recomandari: {
+                type: GraphQLList(RestaurantType),
+                args: {
+                    recent_restaurants: { type: GraphQLList(GraphQLInt) },
+                },
+                resolve: async (root, args, context, info) => {
+                    const restaurants = await RestaurantModel.find({
+                        id: { $in: args.recent_restaurants },
+                    }).lean().exec();
+
+                    const scoringTable = restaurants.reduce((acc, r) => {
+                        acc.judete[r.judet] = (acc.judete[r.judet] || 0) + 1
+                        acc.orase[r.oras] = (acc.orase[r.oras] || 0) + 1
+                        acc.specificuri[r.specific] = (acc.specificuri[r.specific] || 0) + 1
+                        return acc
+                    }, { judete: {}, orase: {}, specificuri: {} })
+                    const topJudet = Object.keys(scoringTable.judete).sort((a, b) => scoringTable.judete[a] > scoringTable.judete[b]).pop()
+                    const topOras = Object.keys(scoringTable.orase).sort((a, b) => scoringTable.orase[a] > scoringTable.orase[b]).pop()
+                    const topSpecific = Object.keys(scoringTable.specificuri).sort((a, b) => scoringTable.specificuri[a] > scoringTable.specificuri[b]).pop()
+                    const topRestaurantJudet = shuffleArray(await RestaurantModel.find({ judet: topJudet }).lean().exec() || [])
+                    const topRestaurantOras = shuffleArray(await RestaurantModel.find({ oras: topOras }).lean().exec() || [])
+                    const topRestaurantSpecific = shuffleArray(await RestaurantModel.find({ specific: topSpecific }).lean().exec() || [])
+                    const result = [...topRestaurantJudet, ...topRestaurantOras, ...topRestaurantSpecific]
+                    return result
                 }
             },
             reviews: {
@@ -182,6 +219,22 @@ const MainSchema = new GraphQLSchema({
                         ...args
                     })
                     return review.save()
+                }
+            },
+            adauga_rezervare: {
+                type: BookingType,
+                args: {
+                    restaurant_id: { type: GraphQLInt },
+                    user_id: { type: GraphQLInt },
+                    data_si_ora: { type: GraphQLDate },
+                    durata_ore: { type: GraphQLInt },
+                    numere_mese: { type: GraphQLList(GraphQLInt) },
+                },
+                resolve: async (root, args, context, info) => {
+                    const booking = new BookingModel({
+                        ...args
+                    })
+                    return booking.save()
                 }
             },
             confirm_restaurant: {

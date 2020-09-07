@@ -9,15 +9,15 @@ import DropdownButton from 'react-bootstrap/DropdownButton'
 import { judete } from '../utils/utils'
 import { useHistory } from 'react-router-dom'
 import Spinner from 'react-bootstrap/Spinner'
+import Recomandari from './Recomandari'
 
 const Restaurants = (props) => {
     const history = useHistory()
     const [searchText, setSearchText] = useState('')
     const [judet, setJudet] = useState('')
     const { loading, error, data, refetch } = useQuery(GET_RESTAURANTS, {
-        variables: { search_text: searchText, judet }
+        variables: { search_text: searchText, judet, user_id: props.owner ? JSON.parse(localStorage.getItem('user_id') || null) || undefined : undefined }
     })
-    console.log(data)
     const [uploading, setUploading] = useState(false)
 
     useEffect(() => {
@@ -31,7 +31,6 @@ const Restaurants = (props) => {
         for (let i = 0; i < files.length; i++) {
             filesFormData.append(`files`, files[i])
         }
-        console.log(files)
         await fetch(`http://localhost:5000/upload-images/${id}`, {
             method: 'POST',
             body: filesFormData,
@@ -60,17 +59,25 @@ const Restaurants = (props) => {
                 </DropdownButton>
                 {data?.restaurants?.map(restaurant => {
                     return (
-                        <div className='card mt-3'>
+                        <div className='card mt-3' key={restaurant.id}>
                             <div className='d-flex justify-content-between card-header'>
                                 <div className='my-auto'>{restaurant.nume}</div>
                                 <div className='d-flex'>
                                     {props.owner && <div>
-                                        <input id='files' name='files' type='file' className='mb-2' style={{ display: 'none' }} onChange={(e) => incarcareImagini(e, restaurant.id)} multiple />
+                                        <input id='files' name='files' type='file' className='mb-2' style={{ display: 'none' }} onChange={(e) => {
+                                            console.log(restaurant)
+                                            incarcareImagini(e, restaurant.id)
+                                        }} multiple />
                                         <label htmlFor="files" className="btn btn-outline-info">Incarcati imagini</label>
                                         {uploading && <Spinner animation="border" variant="info" />}
                                     </div>}
                                     <div className='ml-2'>
-                                        <button onClick={() => history.push(`/restaurant/${restaurant.id}`)} className='btn btn-outline-info'>Detalii</button>
+                                        <button onClick={() => {
+                                            const recent_restaurants = JSON.parse(localStorage.getItem('recent_restaurants') || '[]')
+                                            if (!recent_restaurants.includes(restaurant.id)) recent_restaurants.unshift(restaurant.id)
+                                            localStorage.setItem('recent_restaurants', JSON.stringify(recent_restaurants.slice(0, 20)))
+                                            history.push(`/restaurant/${restaurant.id}`)
+                                        }} className='btn btn-outline-info'>Detalii</button>
                                     </div>
                                 </div>
                             </div>
@@ -90,6 +97,7 @@ const Restaurants = (props) => {
                     )
                 })}
             </Container>
+            <Recomandari />
         </div>
     )
 }

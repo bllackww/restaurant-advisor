@@ -12,7 +12,6 @@ import Container from 'react-bootstrap/Container'
 import 'font-awesome/css/font-awesome.min.css'
 import Restaurants from './components/Restaurants';
 import Restaurant from './components/Restaurant';
-import RestauranteleMele from './components/RestauranteleMele';
 import RestaurantsRequests from './components/RestaurantsRequests';
 
 const client = new ApolloClient({

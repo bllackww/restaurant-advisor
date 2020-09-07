@@ -55,6 +55,24 @@ export const ADAUGA_REVIEW = gql`
   }
 `
 
+export const ADAUGA_REZERVARE = gql`
+  mutation Mutate($user_id: Int!, $restaurant_id: Int!, $data_si_ora: Date!, $durata_ore: Int!, $numere_mese: [Int]!) {
+    adauga_rezervare(
+      user_id: $user_id,
+      restaurant_id: $restaurant_id,
+      data_si_ora: $data_si_ora,
+      durata_ore: $durata_ore,
+      numere_mese: $numere_mese,
+    ){
+      user_id,
+      restaurant_id,
+      data_si_ora,
+      durata_ore,
+      numere_mese
+    }
+  }
+`
+
 export const CONFIRM_RESTAURANT = gql`
   mutation Mutate($id: Int!, $nume: String!, $judet: String!, $oras: String!, $adresa: String!, $mese: [table_input]!) {
     confirm_restaurant(
@@ -101,10 +119,11 @@ export const GET_USER_INFO = gql`
 `
 
 export const GET_RESTAURANTS = gql`
-query Query($search_text: String, $judet: String) {
+query Query($search_text: String, $judet: String, $user_id: Int) {
 		restaurants (
       search_text: $search_text
       judet: $judet
+      user_id: $user_id
     ){
 			id
       nume
@@ -116,6 +135,22 @@ query Query($search_text: String, $judet: String) {
         id
         selected
       }
+      imagini
+		}
+	}
+`
+
+export const GET_RECOMANDARI = gql`
+query Query($recent_restaurants: [Int]!) {
+		recomandari (
+      recent_restaurants: $recent_restaurants
+    ){
+			id
+      nume
+      oras
+      judet
+      adresa
+      specific
       imagini
 		}
 	}
@@ -143,6 +178,13 @@ query Query($restaurant_id: Int!) {
       user_id
       message
       stars
+    }
+    rezervari {
+      restaurant_id
+      user_id
+      data_si_ora
+      durata_ore
+      numere_mese
     }
   }
 }

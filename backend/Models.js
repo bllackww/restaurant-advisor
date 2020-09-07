@@ -56,7 +56,7 @@ const BookingModel = mongoose.model('booking', {
     restaurant_id: Number,
     data_si_ora: Date,
     durata_ore: Number,
-    numar_masa: String,
+    numere_mese: [Number],
 }, 'booking')
 
 const ReviewType = new GraphQLObjectType({
@@ -76,6 +76,7 @@ const BookingType = new GraphQLObjectType({
         user_id: { type: GraphQLInt },
         data_si_ora: { type: GraphQLDate },
         durata_ore: { type: GraphQLInt },
+        numere_mese: { type: GraphQLList(GraphQLInt) },
     }
 })
 
@@ -146,7 +147,7 @@ const RestaurantType = new GraphQLObjectType({
         rezervari: {
             type: GraphQLList(BookingType),
             resolve(parent, args) {
-                return ReviewModel.find({ restaurant_id: parent.id })
+                return BookingModel.find({ restaurant_id: parent.id })
             },
         },
     }
