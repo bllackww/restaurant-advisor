@@ -14,19 +14,22 @@ const Restaurant = (props) => {
     const [bookingModal, setBookingModal] = useState(false)
     return (
         <div>
-            <PicturesCarousel imagini={data?.restaurant[0]?.imagini || []}/>
-            <div className='position-absolute p-3 d-flex flex-column justify-content-between'
-                style={{ top: '70px', left: '70%', width: '300px', height: '300px', backgroundColor: 'lightgray', borderRadius: '5px' }}>
-                <div>
-                    <div>{data?.restaurant[0].nume}</div>
-                <div>{data?.restaurant[0].adresa}</div>
+            <PicturesCarousel imagini={data?.restaurant[0]?.imagini || []} />
+            <div className='d-flex w-100 mt-3 ml-3'>
+                <div className='p-3 d-flex flex-column justify-content-between bg-dark text-white'
+                    style={{ width: '400px', height: '350px', backgroundColor: 'lightgray', borderRadius: '5px' }}>
+                    <div className='d-flex flex-column align-items-center flex-grow-1 p-3 justify-content-around'>
+                        <div>Nume: {data?.restaurant[0].nume}</div>
+                        <div>Judet: {data?.restaurant[0].judet}</div>
+                        <div>Oras: {data?.restaurant[0].oras}</div>
+                        <div>Adresa: {data?.restaurant[0].adresa}</div>
+                        <div>Specific: {data?.restaurant[0].specific}</div>
+                    </div>
+                    <button className='btn text-dark mt-2' style={{ backgroundColor: 'lightgray' }} onClick={() => { setBookingModal(true) }}>Rezervare</button>
                 </div>
-                <button className='btn btn-info' onClick={() => { setBookingModal(true) }}>Rezervare</button>
-            </div>
-            <Container>
                 <Reviews id={props.match.params.id} />
-            </Container>
-            {bookingModal && <BookingModal data={data.restaurant[0]} onClose={() => { setBookingModal(false) }} refetch={() => refetch()}/>}
+            </div>
+            {bookingModal && <BookingModal data={data.restaurant[0]} onClose={() => { setBookingModal(false) }} refetch={() => refetch()} />}
         </div>
     )
 }

@@ -23,14 +23,17 @@ function App() {
     <ApolloProvider client={client}>
       <Navbar variant='dark' className="bg-dark justify-content-between">
         <Nav>
-          <Navbar.Brand href="/">Restaurant Advisor</Navbar.Brand>
-          <Nav.Link href='/restaurants-requests'>Cereri creare restaurant</Nav.Link>
-          <Nav.Link href='/restaurantele-mele'>Restaurantele mele</Nav.Link>
+          <div className='d-flex flex-column my-auto ml-2'>
+            <img className='mx-auto' src='/logo.png' />
+            <a className='text-white' href="/"><h4>Restaurant Advisor</h4></a>
+          </div>
         </Nav>
         <Nav className="justify-content-end align-items-center">
+          <a className='my-auto mr-2 text-white' href='/restaurants-requests'><h5>Cereri creare restaurant |</h5></a>
+          <a className='my-auto mr-4 text-white' href='/restaurantele-mele'><h5>Restaurantele mele</h5></a>
           <AddNewPlace />
-          <Nav.Link href='/register'><button className='btn btn-outline-info'>Inregistrare</button></Nav.Link>
-          <Nav.Link href='/login'><button className='btn btn-outline-info'>Logare</button></Nav.Link>
+          <Nav.Link href='/register'><button className='btn btn-outline-light'>Inregistrare</button></Nav.Link>
+          <Nav.Link href='/login'><button className='btn btn-outline-light'>Logare</button></Nav.Link>
         </Nav>
       </Navbar >
       <Switch>

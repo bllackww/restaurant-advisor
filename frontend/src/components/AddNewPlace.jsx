@@ -15,6 +15,7 @@ const schema = yup.object({
     judet: yup.string().required(),
     oras: yup.string().required(),
     adresa: yup.string().required(),
+    specific: yup.string().required(),
 });
 
 const AddNewPlace = () => {
@@ -25,12 +26,12 @@ const AddNewPlace = () => {
 
     return (
         <>
-            <div className='d-flex my-auto py-2 px-5 mr-2 bg-gray text-white'
-                style={{ border: '2px solid green', borderRadius: '5px', cursor: 'pointer' }}
+            <div className='d-flex my-auto mr-2 bg-gray text-white'
+                style={{ border: '2px solid #28a745', borderRadius: '5px', cursor: 'pointer', padding: '6px 20px 6px 20px' }}
                 onClick={() => setAddPlaceModal(true)}
             >
                 <i className='fa fa-plus fa-lg my-auto text-success' />
-                <h5 className='my-0 ml-2'>Adauga restaurant</h5>
+                <span className='my-0 ml-2'>Adauga restaurant</span>
             </div>
             {addPlaceModal &&
                 <Modal show={true} size='xl' onHide={() => setAddPlaceModal(false)}>
@@ -125,6 +126,18 @@ const AddNewPlace = () => {
                                                         <option>{judet}</option>
                                                     ))}
                                                 </Form.Control>
+                                            </Form.Group>
+                                        </Form.Row>
+                                        <Form.Row>
+                                            <Form.Group as={Col} controlId="specific">
+                                                <Form.Label>Specific</Form.Label>
+                                                <Form.Control
+                                                    name="specific"
+                                                    value={values.specific}
+                                                    onChange={handleChange}
+                                                    isValid={touched.specific && !errors.specific}
+                                                    isInvalid={!!errors.specific}
+                                                />
                                             </Form.Group>
                                         </Form.Row>
                                         <RestaurantPlan tables={tables} setTables={setTables}/>

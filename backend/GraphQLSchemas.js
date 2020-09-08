@@ -84,10 +84,10 @@ const MainSchema = new GraphQLSchema({
                     const topJudet = Object.keys(scoringTable.judete).sort((a, b) => scoringTable.judete[a] > scoringTable.judete[b]).pop()
                     const topOras = Object.keys(scoringTable.orase).sort((a, b) => scoringTable.orase[a] > scoringTable.orase[b]).pop()
                     const topSpecific = Object.keys(scoringTable.specificuri).sort((a, b) => scoringTable.specificuri[a] > scoringTable.specificuri[b]).pop()
-                    const topRestaurantJudet = shuffleArray(await RestaurantModel.find({ judet: topJudet }).lean().exec() || [])
-                    const topRestaurantOras = shuffleArray(await RestaurantModel.find({ oras: topOras }).lean().exec() || [])
-                    const topRestaurantSpecific = shuffleArray(await RestaurantModel.find({ specific: topSpecific }).lean().exec() || [])
-                    const result = [...topRestaurantJudet, ...topRestaurantOras, ...topRestaurantSpecific]
+                    const topRestaurantJudet = shuffleArray(await RestaurantModel.find({ judet: topJudet }).lean().exec() || []).pop()
+                    const topRestaurantOras = shuffleArray(await RestaurantModel.find({ oras: topOras }).lean().exec() || []).pop()
+                    const topRestaurantSpecific = shuffleArray(await RestaurantModel.find({ specific: topSpecific }).lean().exec() || []).pop()
+                    const result = [topRestaurantJudet, topRestaurantOras, topRestaurantSpecific].filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i)
                     return result
                 }
             },

@@ -34,24 +34,29 @@ const Reviews = (props) => {
 
     return (
         <>
-            <div className='reviews mt-2'>
+            <div className='mx-3 reviews w-100' style={{ backgroundColor: '#343a40' }}>
                 <div className='d-flex justify-content-between'>
-                    <h5 className='mb-0'>
+                    <h5 className='mb-0 text-white'>
                         Reviews
                     </h5>
-                    <div className='d-flex cursor-pointer' onClick={() => setAddModal(true)}>
-                        <span className='my-auto'>Adauga review</span>
-                        <i className='fa fa-plus fa-lg my-auto ml-2 text-warning'></i>
+                    <div
+                        className='d-flex cursor-pointer py-2 px-4 bg-dark text-white'
+                        style={{ border: '1px solid #28a745', borderRadius: '5px' }}
+                        onClick={() => setAddModal(true)}
+                    >
+                        <i className='fa fa-plus fa-lg my-auto text-success'></i>
+                        <span className='ml-2 my-auto'>Adauga review</span>
                     </div>
                 </div>
                 {reviews?.data?.reviews[0].reviews.map(r => (
-                    <div style={{border: '1px solid gray', borderRadius: '5px'}} className='my-5 p-3'>
+                    <div style={{ border: '1px solid gray', borderRadius: '5px', backgroundColor: 'lightgray' }} className='my-5 p-3'>
                         <ReactStars
                             count={r.stars}
                             size={24}
                             color2={'#ffd700'}
                             value={r.stars}
-                            edit={false}/>
+                            half={false}
+                            edit={false} />
                         <span>{r.message}</span>
                     </div>
                 ))}
@@ -67,6 +72,7 @@ const Reviews = (props) => {
                         onChange={(value) => setStars(value)}
                         size={24}
                         color2={'#ffd700'}
+                        half={false}
                         value={stars} />
                     <textarea className='w-100' type='textArea' value={message} onChange={(e) => setMessage(e.currentTarget.value)} rows={10}></textarea>
                 </Modal.Body>

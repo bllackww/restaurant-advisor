@@ -39,10 +39,11 @@ const Restaurants = (props) => {
     }
 
     return (
-        <div>
-            <Container>
+        <div className='d-flex'>
+            <Recomandari />
+            <div className='mx-3 flex-grow-1'>
                 <SearchBox searchText={searchText} setSearchText={setSearchText} />
-                <DropdownButton bsPrefix="btn btn-info" id="dropdown-basic-button" title={judet || 'Toate Judetele'}>
+                <DropdownButton bsPrefix="btn btn-dark" id="dropdown-basic-button" title={judet || 'Toate Judetele'}>
                     {['Toate Judetele', ...judete].map(judet => {
                         return (
                             <Dropdown.Item
@@ -59,16 +60,17 @@ const Restaurants = (props) => {
                 </DropdownButton>
                 {data?.restaurants?.map(restaurant => {
                     return (
-                        <div className='card mt-3' key={restaurant.id}>
+                        <div className='card mt-3' key={`restaurant-${restaurant.id}`}>
                             <div className='d-flex justify-content-between card-header'>
                                 <div className='my-auto'>{restaurant.nume}</div>
                                 <div className='d-flex'>
                                     {props.owner && <div>
-                                        <input id='files' name='files' type='file' className='mb-2' style={{ display: 'none' }} onChange={(e) => {
+                                        {console.log(restaurant.id)}
+                                        <input id={`files-${restaurant.id}`} name='files' type='file' className='mb-2' style={{ display: 'none' }} onChange={(e) => {
                                             console.log(restaurant)
                                             incarcareImagini(e, restaurant.id)
                                         }} multiple />
-                                        <label htmlFor="files" className="btn btn-outline-info">Incarcati imagini</label>
+                                        <label htmlFor={`files-${restaurant.id}`} className="btn btn-dark">Incarcati imagini</label>
                                         {uploading && <Spinner animation="border" variant="info" />}
                                     </div>}
                                     <div className='ml-2'>
@@ -77,7 +79,7 @@ const Restaurants = (props) => {
                                             if (!recent_restaurants.includes(restaurant.id)) recent_restaurants.unshift(restaurant.id)
                                             localStorage.setItem('recent_restaurants', JSON.stringify(recent_restaurants.slice(0, 20)))
                                             history.push(`/restaurant/${restaurant.id}`)
-                                        }} className='btn btn-outline-info'>Detalii</button>
+                                        }} className='btn btn-dark'>Detalii</button>
                                     </div>
                                 </div>
                             </div>
@@ -86,18 +88,18 @@ const Restaurants = (props) => {
                                     <div>
                                         <img className='card-img' src={`http://localhost:5000/image/${restaurant.imagini[0]}`} />
                                     </div>
-                                    <div className='p-3'>
+                                    <div className='p-3 my-auto'>
                                         <div><strong>Judet:</strong> {restaurant.judet}</div>
                                         <div><strong>Oras:</strong> {restaurant.oras}</div>
                                         <div><strong>Adresa:</strong> {restaurant.adresa}</div>
+                                        <div><strong>Specific:</strong> {restaurant.specific}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     )
                 })}
-            </Container>
-            <Recomandari />
+            </div>
         </div>
     )
 }

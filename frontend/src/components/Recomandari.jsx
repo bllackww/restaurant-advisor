@@ -12,7 +12,11 @@ const Recomandari = (props) => {
     })
 
     return (
-        <div className='w-100 d-flex justify-content-around py-3' style={{ height: '200px', position: 'fixed', bottom: 0, backgroundColor: 'lightcyan' }}>
+        <div className='d-flex flex-column justify-content-around py-3 bg-dark text-white' style={{ height: '900px' }}>
+            <div className='mx-auto'>
+                <h4 className='text-center'>Recomandarile</h4>
+                <h4 className='text-center'>noastre</h4>
+            </div>
             {data?.recomandari.map(restaurant => (
                 <div className='cursor-pointer' onClick={() => {
                     const recent_restaurants = JSON.parse(localStorage.getItem('recent_restaurants') || '[]')
@@ -20,10 +24,10 @@ const Recomandari = (props) => {
                     localStorage.setItem('recent_restaurants', JSON.stringify(recent_restaurants.slice(0, 20)))
                     history.push(`/restaurant/${restaurant.id}`)
                 }}
-                    key={restaurant.id}
+                    key={`recomandare-${restaurant.id}`}
                 >
-                    <div className='d-flex'>
-                        <div>
+                    <div className='d-flex flex-column'>
+                        <div className='mx-auto'>
                             <img className='card-img' src={`http://localhost:5000/image/${restaurant.imagini[0]}`} />
                         </div>
                         <div className='p-3'>

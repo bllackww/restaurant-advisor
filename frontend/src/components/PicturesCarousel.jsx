@@ -3,7 +3,7 @@ import Carousel from 'react-bootstrap/Carousel'
 
 const PicturesCarousel = ({ imagini }) => {
     return (
-        <div style={{width: '80%'}} className='mx-auto'>
+        <div style={{width: '100%'}} className='mx-auto'>
             <Carousel controls={false}>
                 {imagini.map(imagine => (
                     <Carousel.Item>

@@ -28,29 +28,33 @@ body {
 }
 
 .table.empty {
-  background-color: #17a2b8;
+  background-color: #343a40;
   
 }
 
 .table.reserved {
   background-color: red;
-  
 }
 
 .nr-locuri-input {
   width: 50px;
   height: 30px;
-  border-color: lightskyblue;
+  border-color: #28a745;
 }
 
 .card-img {
   width: 200px;
   height: 200px;
+  border-radius: 50%;
   object-fit: cover;
 }
 
 .reviews {
-  border: 1px solid orange;
+  border: 1px solid #343a40;
   border-radius: 5px;
   padding: 1rem;
+}
+
+.card-header {
+  background-color: lightgray;
 }

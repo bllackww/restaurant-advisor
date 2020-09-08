@@ -13,7 +13,7 @@ const PlanRezevare = ({ bookings, tables, setTables, data_si_ora, durata_ore }) 
         .map((t, i) => t.index)
 
     return (
-        <div className='w-100 border-success d-flex flex-wrap bg-info p-3'>
+        <div className='w-100 border-success d-flex flex-wrap bg-dark p-3'>
             {tables.map((table, index) => (
                 <div key={`table-${index}`}
                     className={
